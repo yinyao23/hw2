@@ -7,12 +7,30 @@ class MoviesController < ApplicationController
   end
 
   def index
-    # @movies = Movie.all
-    @moview = Movie.with_ratings(params[:ratings].keys)
-    @all_ratings = ['G','PG','PG-13','R']
-    @ratings_to_show = []
+    @all_ratings = Movie.all_ratings
+    
+    # Part_2: filter by rating selections
+    if params[:ratings] != nil
+      @ratings_to_show = params[:ratings].keys
+      @movies = Movie.with_ratings(@ratings_to_show)
+    else
+      @ratings_to_show = []
+      @movies = Movie.all
+    end
+    
+    # Part_1: sort by movie titles or release date
+    sort_by = params[:sort]
+    sort_movies(sort_by) if sort_by != nil
   end
-
+  
+  def sort_movies(sort_by)
+    if sort_by == 'title'
+      @movies, @title_class = Movie.all.order(title: :asc), 'hilite bg-warning' 
+    elsif sort_by == 'date'
+      @movies, @date_class = Movie.all.order(release_date: :asc), 'hilite bg-warning'
+    end
+  end
+  
   def new
     # default: render 'new' template
   end
