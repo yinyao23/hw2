@@ -10,24 +10,30 @@ class MoviesController < ApplicationController
     @all_ratings = Movie.all_ratings
     
     # Part_2: filter by rating selections
-    if params[:ratings] != nil
+    if params[:ratings] 
       @ratings_to_show = params[:ratings].keys
-      @movies = Movie.with_ratings(@ratings_to_show)
+    # elsif session[:ratings]
+    #   @ratings_to_show = session[:ratings]
     else
       @ratings_to_show = []
-      @movies = Movie.all
     end
+    @movies = Movie.with_ratings(@ratings_to_show)
     
     # Part_1: sort by movie titles or release date
-    sort_by = params[:sort]
+    sort_by = params[:sort] 
     sort_movies(sort_by) if sort_by != nil
+    
+    # Remeber settings in cookies
+    # session[:ratings] = @ratings_to_show
+    # session[:sort] = sort_by
   end
   
   def sort_movies(sort_by)
+    @ratings_to_show = params[:selected_ratings]
     if sort_by == 'title'
-      @movies, @title_class = Movie.all.order(title: :asc), 'hilite bg-warning' 
+      @movies, @title_class = Movie.with_ratings(params[:selected_ratings]).order(title: :asc), 'hilite bg-warning' 
     elsif sort_by == 'date'
-      @movies, @date_class = Movie.all.order(release_date: :asc), 'hilite bg-warning'
+      @movies, @date_class = Movie.with_ratings(params[:selected_ratings]).order(release_date: :asc), 'hilite bg-warning'
     end
   end
   
