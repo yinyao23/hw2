@@ -5,8 +5,19 @@ class MoviesController < ApplicationController
     @movie = Movie.find(id) # look up movie by unique ID
     # will render app/views/movies/show.<extension> by default
   end
-  
+    
   def index
+    # if session[:visited] == nil
+    #   session.clear
+    #   session[:visited] = false
+    # end
+    # logger.debug(request.referrer.inspect)
+    
+    if @start == 1
+      @start = 0
+      session.clear
+    end
+    
     @all_ratings = Movie.all_ratings
     @ratings_to_show = []
     sort_by = nil
